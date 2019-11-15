@@ -9,20 +9,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn import preprocessing
-#from sklearn.svm import SVC
-#from ensembler import blend
 from sklearn.ensemble import ExtraTreesRegressor
-#from catboost import CatBoostRegressor
-#from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
-#from sklearn.linear_model import LinearRegression, Lasso
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-#from sklearn.metrics import mean_squared_error, mean_absolute_error
-#from sklearn.base import BaseEstimator, TransformerMixin, RegressorMixin, clone
-#from sklearn.ensemble import RandomForestRegressor
 import pandas as pd
 from mlxtend.classifier import StackingClassifier
-#from math import sqrt, log, exp
 
 
 
@@ -104,24 +95,6 @@ def ScalingColumns(dataFrame,columnName):
     scaledColumn = scaler.fit_transform(column)
     normalizeColumn = pd.DataFrame(scaledColumn)
     dataFrame[columnName] = normalizeColumn
-    return dataFrame
-
-
-
-
-
-def oneHotEncoder(uniqueFeautes,dataFrame,columnName):
-    
-    # OneHeartEncoder
-    encoder = OneHotEncoder(categories = [uniqueFeautes],sparse = False, handle_unknown = 'ignore')
-
-    #reshape the column
-    column = dataFrame[columnName]
-    column = np.array(column).reshape(-1,1)
-
-    #Extract the column and join the data frame
-    dataFrame = dataFrame.join(pd.DataFrame(encoder.fit_transform(column),columns=encoder.categories_,index=dataFrame.index))
-
     return dataFrame
 
 
@@ -283,29 +256,6 @@ def outlier_removal(feature):
 
 
 
-def outlier_removal(df, feature):
-    '''removes outliers from features passed to the function and returns a dataframe.'''
-    q3, q1 = np.percentile(df[feature], [75 ,25])
-    iqr = q3 - q1
-    ul = q3 + (1.5*iqr)
-    ll = q1 - (1.5*iqr)
-    not_outliers = 0
-    outliers = 0
-    for i in range(len(df)):
-        if ll <= df.loc[i, feature] <= ul:
-            not_outliers += 1
-        else:
-            df.drop(index=i, inplace=True)
-            outliers +=1
-        
-    print('\t\tFor ', feature)
-    print('\t\tNot outliers: ', not_outliers)
-    print('\t\tOutliers: ', outliers, '\n')
-    
-    return df
-
-
-
 
 def evaluateMAE(model,crossValScore):
     score = np.sqrt(-crossValScore)
@@ -324,10 +274,10 @@ def printRegressionStats(y_test, model):
     predictions = np.exp(model.predict(y_test))
     print('Local MAE: ', np.round(mean_absolute_error(y_test, predictions), 4))
     #print('RMSE on original price:', round(np.sqrt(mean_squared_error(np.expm1(y_test), model_pred)), 4))
-   # print('RMSE on log transformed price:', round(np.sqrt(mean_squared_error(y_test, np.log1p(model_pred))), 4))
+    #print('RMSE on log transformed price:', round(np.sqrt(mean_squared_error(y_test, np.log1p(model_pred))), 4))
 
-#     print('MSE: ', np.round(mean_squared_error(y_test, model_pred), 4))
-#     print('MAE: ', np.round(mean_absolute_error(y_test, model_pred), 4))
+    #print('MSE: ', np.round(mean_squared_error(y_test, model_pred), 4))
+    #print('MAE: ', np.round(mean_absolute_error(y_test, model_pred), 4))
     print('\n')
 
 
@@ -414,26 +364,6 @@ def run():
     #Take log of all the values in the y_train column
     y_train = np.log(y_train)
     
-    '''
-    regressorModels = [
-          RandomForestRegressor(n_estimators=5,n_jobs=-1),
-          GradientBoostingRegressor(n_estimators=5),
-          ExtraTreesRegressor(n_estimators=10, max_depth=6, max_features=None, n_jobs=-1),
-          ]
-    =
-    #Creating Ensemble Regressor model
-    print("Creating Ensemble Regressor model...")
-    ensembleModel = blend.BlendModel(regressorModels, nFoldsBase=3)
-    print("Created Ensemble Regressor model.")
-    
-    #Fitting Ensemble Regressor model
-    print("Fitting Ensemble Regressor model...")
-    ensembleModel.fit(training_dataset, y_train)
-    print("Done")
-    
-    predictions = ensembleModel.predict(test_dataset)
-    
-    '''
     #Create Random Forest Regressor model
     print("Creating Random Forest Regressor model...")
     randomForestModel = rfr_model(training_dataset,y_train)
@@ -443,12 +373,9 @@ def run():
     print("Creating Gradient Boost Regressor model...")
     gradientBoostModel = gbr_model(training_dataset,y_train)
     print("Created Gradient Boost Regressor model.")
-    
-    
-    
+   
     #crossValScore = cross_val_score(randomForestModel, X_train_val, y_train_val, cv=kf, scoring='neg_mean_absolute_error')
     #evaluateMAE(randomForestModel,crossValScore)
-    
     
     #Fit the Random Forest Regressor model
     print("Fitting the Random Forest Regressor model...")
@@ -490,34 +417,7 @@ def run():
 
 if __name__ == '__main__':
     run()
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    #List of Categorical Data columns and encoding strategies for each 
-    # -> Housing Situation - TARGET
-    # -> Satisfation with employer - TARGET
-    # -> Gender - TARGET
-    # -> Country - TARGET
-    # -> Profession - TARGET
-    # -> University Degree - TARGET
-    # -> Hair Color - TARGET
-    
-    
-    #Extracting UNIQUE features from Profession and Country columns
-    #uniqueSatisfactionWithEmployer = training_dataset['Satisfation with employer'].unique()
-    #uniqueGender = training_dataset['Gender'].unique()
-    #uniqueUniversity = training_dataset['University Degree'].unique()
-    #uniqueHousingSituation = training_dataset['Housing Situation'].unique()    
+     
     
 
 '''
