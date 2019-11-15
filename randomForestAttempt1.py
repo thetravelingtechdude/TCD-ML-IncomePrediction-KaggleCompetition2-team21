@@ -13,7 +13,6 @@ from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 import pandas as pd
-from mlxtend.classifier import StackingClassifier
 
 
 
