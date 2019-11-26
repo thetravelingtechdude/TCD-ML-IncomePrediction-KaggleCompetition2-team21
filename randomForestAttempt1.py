@@ -173,10 +173,6 @@ def targetEncoder(trn_series,tst_series,target):
 def preprocessingFormattingDS(training_dataset,test_dataset):
     #Function to pre process the dataframe
     
-    #Check for duplicate records
-    #training_dataset[training_dataset['Instance'].duplicated()]
-    #test_dataset[test_dataset['Instance'].duplicated()]
-    
     #Removing Instance Column
     training_dataset = training_dataset.loc[:, [
     'Year of Record', 'Housing Situation', 'Crime Level in the City of Employement','Work Experience in Current Job [years]','Satisfation with employer', 'Gender', 'Age', 'Country', 'Size of City', 'Profession', 'University Degree', 'Wears Glasses', 'Hair Color', 'Body Height [cm]', 'Yearly Income in addition to Salary (e.g. Rental Income)']]
@@ -232,28 +228,6 @@ def rem_outliers(df):
 
 
 
-'''
-#Data that falls within Q1 - 1.5IQR & Q3 + 1.5IQR are retained.
-def outlier_removal(feature):
-    q3, q1 = np.percentile(df[feature], [75 ,25])
-    iqr = q3 - q1
-    ul = q3 + (1.5*iqr)
-    ll = q1 - (1.5*iqr)
-    not_outliers = 0
-    outliers = 0
-    for i in range(len(df)):
-        if ll <= df.loc[i, feature] <= ul:
-            not_outliers += 1
-        else:
-            df.drop(index=i, inplace=True)
-            outliers +=1
-    print('Not outliers: ', not_outliers)
-    print('Outliers: ', outliers)
-    return
-'''
-
-
-
 
 
 def evaluateMAE(model,crossValScore):
@@ -261,23 +235,6 @@ def evaluateMAE(model,crossValScore):
     print('Cross validation score:\n')
     print('Local MAE: ', round(score.min(), 4))
     
-    
-    
-    
-    
-def printRegressionStats(y_test, model):
-    #Prints regression evaluation metrics.
-    y_test = y_test.reshape(-1, 1)
-    print('Length of testing data: ', len(y_test))
-    
-    predictions = np.exp(model.predict(y_test))
-    print('Local MAE: ', np.round(mean_absolute_error(y_test, predictions), 4))
-    #print('RMSE on original price:', round(np.sqrt(mean_squared_error(np.expm1(y_test), model_pred)), 4))
-    #print('RMSE on log transformed price:', round(np.sqrt(mean_squared_error(y_test, np.log1p(model_pred))), 4))
-
-    #print('MSE: ', np.round(mean_squared_error(y_test, model_pred), 4))
-    #print('MAE: ', np.round(mean_absolute_error(y_test, model_pred), 4))
-    print('\n')
 
 
 
@@ -301,8 +258,8 @@ def run():
     print('Categorical columns: ', len(categorical_columns), '\n', categorical_columns, '\n')
     
     #Features with their corresponding missing values.
-    #print('\nNumber of columns in Training Dataset with missing values: ', len(training_dataset.isnull().sum()[training_dataset.isnull().sum() > 0]))
-    #print(training_dataset.isnull().sum()[training_dataset.isnull().sum() > 0])
+    print('\nNumber of columns in Training Dataset with missing values: ', len(training_dataset.isnull().sum()[training_dataset.isnull().sum() > 0]))
+    print(training_dataset.isnull().sum()[training_dataset.isnull().sum() > 0])
     
     #Removing columns with more than 25% of missing values
     threshold = len(training_dataset) * 0.25
@@ -344,18 +301,11 @@ def run():
     # => Hair
     training_dataset['Hair Color'],test_dataset['Hair Color']= targetEncoder(training_dataset['Hair Color'],test_dataset['Hair Color'],y_train)
     
-    '''    
-    #Handling Outliers
-    columns = training_dataset.columns.tolist()
-    for i in columns:
-        outlier_removal(training_dataset,i)
-    '''
-    
     #Understanding the features and their datatypes
-    #plt.figure(figsize=(24,20))
-    #cor = training_dataset.corr()
-    #sns.heatmap(cor, annot=True, cmap=plt.cm.Reds)
-    #plt.show()
+    plt.figure(figsize=(24,20))
+    cor = training_dataset.corr()
+    sns.heatmap(cor, annot=True, cmap=plt.cm.Reds)
+    plt.show()
     
     #X_train_val, X_test_val, y_train_val, y_test_val = train_test_split(training_dataset, y_train, test_size=0.3, random_state=42)
     #kf = KFold(n_splits=5)
