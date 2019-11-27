@@ -19,4 +19,4 @@ Model Training:
 
 Final Prediction:
 
--> Took the average of both XGB and LGBM predictions for the final Submission..
+-> Took the average of both XGB and LGBM predictions for the final Submission.
